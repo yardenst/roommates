@@ -49,3 +49,7 @@ header input,header button
 {
 	width:30px;
 }
+
+.payments{margin:0;padding:10px;}
+
+.payments > li {list-style-type: disc ;}

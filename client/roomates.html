@@ -35,7 +35,7 @@
 
 <template name="payments">
 	{{#if payments}}
-	<ul>
+	<ul class="payments">
 		{{#each payments}}
 		<li>{{text}}</li>
 		{{/each}}
@@ -60,3 +60,4 @@
 	<input type="text" placeholder="roomate name..." id="newRoomateName">
 	<button id="createRoomateBtn">new roomate</button>
 </template>
+
