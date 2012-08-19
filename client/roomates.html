@@ -1,0 +1,62 @@
+<head>
+	<title>roomates</title>
+</head>
+
+<body>
+	<header>
+		{{>newRoomate}}
+	</header>
+
+	{{>apartment}}
+	
+	
+</body>
+
+
+
+
+<template name="apartment">
+	{{#if roomates}}
+	<ul id="roomates">
+		{{#each roomates}}
+		<li>
+			{{>newPayment}}
+			<h2>{{name}}</h2>
+			{{>payments}}
+			
+		</li>
+		{{/each}}
+	</ul>
+	{{else}}
+	<b>no roomates yet</b>
+	{{/if}}
+	
+</template>
+
+<template name="payments">
+	{{#if payments}}
+	<ul>
+		{{#each payments}}
+		<li>{{text}}</li>
+		{{/each}}
+	</ul>
+	{{else}}
+	-- no payments yet --
+	{{/if}}
+</template>
+
+
+
+<template name="newPayment">
+	<div class="newPayment">
+		<input type="text" placeholder="what">
+		<input type="text" placeholder="$$$">
+		<button class='pay'>add</button>
+	</div>
+</template>
+
+
+<template name="newRoomate">
+	<input type="text" placeholder="roomate name..." id="newRoomateName">
+	<button id="createRoomateBtn">new roomate</button>
+</template>
