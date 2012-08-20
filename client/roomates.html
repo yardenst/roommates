@@ -19,7 +19,7 @@
 	{{#if roomates}}
 	<ul id="roomates">
 		{{#each roomates}}
-		<li>
+		<li id="roomate_{{_id}}">
 			{{>newPayment}}
 			<h2>{{name}}</h2>
 			{{>payments}}
@@ -37,7 +37,12 @@
 	{{#if payments}}
 	<ul class="payments">
 		{{#each payments}}
-		<li>{{text}}</li>
+		<li>
+			<span class="what">
+				{{text}}
+			</span>
+			<span class="money">{{money}}  ₪ </span>
+		</li>
 		{{/each}}
 	</ul>
 	{{else}}
@@ -49,8 +54,8 @@
 
 <template name="newPayment">
 	<div class="newPayment">
-		<input type="text" placeholder="what">
-		<input type="text" placeholder="$$$">
+		<input type="text" placeholder="what" id="what" >
+		<input type="text" placeholder="$$$" id="money" >
 		<button class='pay'>add</button>
 	</div>
 </template>

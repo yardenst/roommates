@@ -26,6 +26,8 @@ header input,header button
 	padding: 10px;
 	border-radius:3px;
 	box-shadow:1px 1px 1px 2px #eee;
+	vertical-align: top;
+	direction:rtl;
 }
 
 #roomates > li > h2{
@@ -52,4 +54,8 @@ header input,header button
 
 .payments{margin:0;padding:10px;}
 
-.payments > li {list-style-type: disc ;}
+.payments > li {list-style-type: none ;float:right;clear:both;width:100%;}
+
+.payments > li .money{color:#555;font-size:8pt;float:left;}
+.payments > li .what{float:right;}
+

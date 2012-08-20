@@ -30,10 +30,11 @@ if (Meteor.is_client) {
   Template.newPayment.events = {
 
     'click button' : function(e){
+
       console.log(e);
       var payment =  {
-        text: "food",
-        money: 10,
+        text: $('#what','#roomate_' + this._id).val(),
+        money: $('#money','#roomate_' + this._id).val(),
         roomate_id: this._id,
         timestamp: (new Date()).getTime()
       }
