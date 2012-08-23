@@ -19,8 +19,9 @@
 	<ul id="roomates">
 		{{#each roomates}}
 		<li id="roomate_{{_id}}">
-			{{>newPayment}}
 			<h2>{{name}}</h2>
+			{{>newPayment}}
+			
 			{{>payments}}
 		</li>
 		{{/each}}

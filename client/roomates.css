@@ -17,6 +17,7 @@ header input,header button
 	list-style-type: none;
 	margin:0;
 	padding: 0;
+	text-align: center;
 }
 
 #roomates > li{
@@ -33,7 +34,7 @@ header input,header button
 #roomates > li > h2{
 	font-size: 15pt;
 	color:green;
-	margin-bottom: 0 0 10px 0;
+	margin: 0 0 10px 0;
 
 }
 
