@@ -9,9 +9,24 @@ Template.apartment.roomates = function () {
 Payments = new Meteor.Collection("payments");
 
 Template.payments.payments = function(){
-  return Payments.find({roomate_id : this._id});
+  var filter = {roomate_id : this._id};
+  var sort = {sort : {timestamp: -1}};
+  var itemsCount = 50;
+  return Payments.find(filter,sort).fetch().slice(0,50);
 };
 
+(function getPaymentsTotalPerRoomate(){
+  Template.payments.total = function(){
+    var paymentsSum=0;
+    roomatePayments=Payments.find({roomate_id : this._id});
+    roomatePayments.forEach(function (payment){
+      paymentsSum+=payment['money']*1;
+    });
+
+
+    return paymentsSum;
+  };
+})();
 
 
 
@@ -19,11 +34,29 @@ Template.payments.payments = function(){
 if (Meteor.is_client) {
 
 
+  Template.returnings.events = {
+
+    'click button' : function(event){
+     
+     calculateReturnings();
+
+    }
+  };
+
+
   Template.newRoomate.events = {
 
     'click #createRoomateBtn' : function(event){
       var roomateName = document.getElementById('newRoomateName').value;
       var id=Roomates.insert({name: roomateName});
+
+    }
+  };
+
+  Template.payments.events = {
+
+    'click .removePayment' : function(event){
+      Payments.remove ({_id : this._id })
     }
   };
 
@@ -31,7 +64,7 @@ if (Meteor.is_client) {
 
     'click button' : function(e){
 
-      console.log(e);
+
       var payment =  {
         text: $('#what','#roomate_' + this._id).val(),
         money: $('#money','#roomate_' + this._id).val(),
@@ -45,11 +78,89 @@ if (Meteor.is_client) {
 
   };
 
+
+
+  function calculateReturnings(){
+    var all_roomates = Roomates.find({});
+    var roomate_to_total=[];
+    totalAll=0;
+    all_roomates.forEach(function (roomate){
+
+     var paymentsSum=0;
+
+     roomatePayments=Payments.find({roomate_id : roomate["_id"]});
+
+     roomatePayments.forEach(function (payment){
+      paymentsSum+=payment['money']*1;
+    });
+
+     totalAll+=paymentsSum;
+     roomate_to_total.push({r : roomate , t : paymentsSum});
+
+
+   });
+
+    var avg =  totalAll/roomate_to_total.length;
+
+    var happened;
+    do{  
+      happened = makeTransfer();
+    }
+    while(happened);
+
+
+    
+
+    function makeTransfer(){
+      var flag=false;
+      for(var i in roomate_to_total)
+      {
+        var item = roomate_to_total[i];
+        if (item["t"]*1 > avg)
+        {
+
+
+          for(var j in roomate_to_total)
+          {
+            var item2 = roomate_to_total[j];
+
+
+            if(item2["t"]*1<avg)
+            {
+
+              var wishToTransfer = (avg-  item2["t"]*1 );
+              
+              console.log(item2["r"]["name"] + " give to " + item["r"]["name"] + " " + wishToTransfer);
+              $("#returningsText").append("<li>" + item2["r"]["name"] + " give to " + item["r"]["name"] + " " + wishToTransfer+  "</li>");
+              
+
+              item2["t"] = item2["t"]*1 + wishToTransfer;
+
+              item["t"] = item["t"]*1 - wishToTransfer;
+              
+
+              return true;
+
+
+            }
+
+          }
+
+        }
+      }
+      return flag;
+    }
+  }
+
+
+
 }
 
 
 if (Meteor.is_server) {
   Meteor.startup(function () {
-    // code to run on server at startup
+
+
   });
+
 }

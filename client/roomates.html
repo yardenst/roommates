@@ -5,6 +5,7 @@
 <body>
 	<header>
 		{{>newRoomate}}
+		{{>returnings}}
 	</header>
 
 	{{>apartment}}
@@ -12,8 +13,10 @@
 	
 </body>
 
-
-
+<template name="returnings">
+	<button>calculate returnings</button>
+	<div id="returningsText"></div>
+</template>
 
 <template name="apartment">
 	{{#if roomates}}
@@ -23,28 +26,31 @@
 			{{>newPayment}}
 			<h2>{{name}}</h2>
 			{{>payments}}
-			
 		</li>
 		{{/each}}
 	</ul>
 	{{else}}
 	<b>no roomates yet</b>
 	{{/if}}
-	
 </template>
 
 <template name="payments">
 	{{#if payments}}
-	<ul class="payments">
+	<ul class="payments clearfix" >
 		{{#each payments}}
 		<li>
-			<span class="what">
-				{{text}}
-			</span>
-			<span class="money">{{money}}  ₪ </span>
+			<button class="removePayment">x</button>
+			<span class="what">{{text}}</span>
+			<span class="money">{{money}}  ₪</span>
 		</li>
 		{{/each}}
 	</ul>
+	{{#if total}}
+	<div class="totalPayments">
+	{{ total }} ₪
+	</div>
+	{{/if}}
+     
 	{{else}}
 	-- no payments yet --
 	{{/if}}
@@ -55,7 +61,7 @@
 <template name="newPayment">
 	<div class="newPayment">
 		<input type="text" placeholder="what" id="what" >
-		<input type="text" placeholder="$$$" id="money" >
+		<input type="text" min="1" placeholder="$$$" id="money" >
 		<button class='pay'>add</button>
 	</div>
 </template>

@@ -58,4 +58,8 @@ header input,header button
 
 .payments > li .money{color:#555;font-size:8pt;float:left;}
 .payments > li .what{float:right;}
+.removePayment {float:right;font-size:6pt; color: red;margin-left: 4px;opacity: 0.2}
 
+.payments > li:hover .removePayment{opacity: 1}
+
+.totalPayments{text-align: center;background: lime;padding: 4px;border:solid 1px green;margin:10px 5px;border-radius: 3px}
