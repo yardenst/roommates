@@ -5,7 +5,7 @@
 <body>
 	<header>
 		{{>newRoomate}}
-		{{>returnings}}
+		{{>returningsAction}}
 	</header>
 
 	{{>apartment}}
@@ -13,9 +13,8 @@
 	
 </body>
 
-<template name="returnings">
+<template name="returningsAction">
 	<button>calculate returnings</button>
-	<div id="returningsText"></div>
 </template>
 
 <template name="apartment">
@@ -47,15 +46,32 @@
 	</ul>
 	{{#if total}}
 	<div class="totalPayments">
-	{{ total }} ₪
+		{{ total }} ₪
 	</div>
 	{{/if}}
-     
+
 	{{else}}
 	-- no payments yet --
 	{{/if}}
+	<div style="direction:ltr">
+	{{>returnings}}
+</div>
+	
 </template>
 
+<template name="returnings">
+	{{#if returnings}}
+	<ul class="perRommateReturnings clearfix">
+		{{#each returnings}}
+		<li> {{payment}} ₪ -> {{getter}} 	</li>
+		{{/each}}
+	</ul>
+	{{else}}
+	<div class="money-back">
+		You need to get money back :)
+	</div>
+	{{/if}}
+</template>
 
 
 <template name="newPayment">

@@ -62,4 +62,32 @@ header input,header button
 
 .payments > li:hover .removePayment{opacity: 1}
 
+
+
 .totalPayments{text-align: center;background: lime;padding: 4px;border:solid 1px green;margin:10px 5px;border-radius: 3px}
+
+.perRommateReturnings
+{
+	padding: 4px;
+	margin:10px 5px;
+	border:solid 1px #EED3D7;
+	border-radius: 3px;
+	list-style-type: none;
+	color: #B94A48;
+	background-color: #F2DEDE;
+}
+.money-back
+{
+
+	padding: 4px;
+	margin:10px 5px;
+	border:solid 1px #D6E9C6;
+	border-radius: 3px;
+	list-style-type: none;
+	color: #B94A48;
+	background-color: #F2DEDE;
+
+	color: #468847;
+	background-color: #DFF0D8;
+
+}

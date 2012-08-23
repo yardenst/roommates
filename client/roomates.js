@@ -15,142 +15,153 @@ Template.payments.payments = function(){
   return Payments.find(filter,sort).fetch().slice(0,50);
 };
 
-(function getPaymentsTotalPerRoomate(){
-  Template.payments.total = function(){
-    var paymentsSum=0;
-    roomatePayments=Payments.find({roomate_id : this._id});
-    roomatePayments.forEach(function (payment){
-      paymentsSum+=payment['money']*1;
-    });
+Template.payments.total = function(){
+  var paymentsSum=0;
+  roomatePayments=Payments.find({roomate_id : this._id});
+  roomatePayments.forEach(function (payment){
+    paymentsSum+=payment['money']*1;
+  });
 
 
-    return paymentsSum;
-  };
-})();
+  return paymentsSum;
+};
 
 
+///////Returnings///////////
+Returnings = new Meteor.Collection("returnings");
+
+Template.returnings.returnings = function(){
+  var payload =  Returnings.find({payer_id : this._id});
+  if(payload.count()==0)
+  {
+    return null;
+  }
+  return payload;
+
+};
 
 
 if (Meteor.is_client) {
 
 
-  Template.returnings.events = {
+  Template.returningsAction.events = {
 
     'click button' : function(event){
-     
+
      calculateReturnings();
 
+   }
+ };
+
+
+ Template.newRoomate.events = {
+
+  'click #createRoomateBtn' : function(event){
+    var roomateName = document.getElementById('newRoomateName').value;
+    var id=Roomates.insert({name: roomateName});
+
+  }
+};
+
+Template.payments.events = {
+
+  'click .removePayment' : function(event){
+    Payments.remove ({_id : this._id })
+    calculateReturnings();
+  }
+};
+
+Template.newPayment.events = {
+
+  'click button' : function(e){
+
+
+    var payment =  {
+      text: $('#what','#roomate_' + this._id).val(),
+      money: $('#money','#roomate_' + this._id).val(),
+      roomate_id: this._id,
+      timestamp: (new Date()).getTime()
     }
-  };
+    var id = Payments.insert(payment);
+    calculateReturnings();
 
+  }
 
-  Template.newRoomate.events = {
-
-    'click #createRoomateBtn' : function(event){
-      var roomateName = document.getElementById('newRoomateName').value;
-      var id=Roomates.insert({name: roomateName});
-
-    }
-  };
-
-  Template.payments.events = {
-
-    'click .removePayment' : function(event){
-      Payments.remove ({_id : this._id })
-    }
-  };
-
-  Template.newPayment.events = {
-
-    'click button' : function(e){
-
-
-      var payment =  {
-        text: $('#what','#roomate_' + this._id).val(),
-        money: $('#money','#roomate_' + this._id).val(),
-        roomate_id: this._id,
-        timestamp: (new Date()).getTime()
-      }
-      var id = Payments.insert(payment);
-      
-
-    }
-
-  };
+};
 
 
 
-  function calculateReturnings(){
-    var all_roomates = Roomates.find({});
-    var roomate_to_total=[];
-    totalAll=0;
-    all_roomates.forEach(function (roomate){
+function calculateReturnings(){
+ Returnings.remove({});
+ var all_roomates = Roomates.find({});
+ var roomate_to_total=[];
+ totalAll=0;
+ all_roomates.forEach(function (roomate){
 
-     var paymentsSum=0;
+   var paymentsSum=0;
 
-     roomatePayments=Payments.find({roomate_id : roomate["_id"]});
+   roomatePayments=Payments.find({roomate_id : roomate["_id"]});
 
-     roomatePayments.forEach(function (payment){
-      paymentsSum+=payment['money']*1;
-    });
+   roomatePayments.forEach(function (payment){
+    paymentsSum+=payment['money']*1;
+  });
 
-     totalAll+=paymentsSum;
-     roomate_to_total.push({r : roomate , t : paymentsSum});
-
-
-   });
-
-    var avg =  totalAll/roomate_to_total.length;
-
-    var happened;
-    do{  
-      happened = makeTransfer();
-    }
-    while(happened);
+   totalAll+=paymentsSum;
+   roomate_to_total.push({r : roomate , t : paymentsSum});
 
 
-    
+ });
 
-    function makeTransfer(){
-      var flag=false;
-      for(var i in roomate_to_total)
+ var avg =  totalAll/roomate_to_total.length;
+
+ var happened;
+ do{  
+  happened = makeTransfer();
+}
+while(happened);
+
+
+
+
+function makeTransfer(){
+  var flag=false;
+  for(var i in roomate_to_total)
+  {
+    var item = roomate_to_total[i];
+    if (item["t"]*1 > avg)
+    {
+
+
+      for(var j in roomate_to_total)
       {
-        var item = roomate_to_total[i];
-        if (item["t"]*1 > avg)
+        var item2 = roomate_to_total[j];
+
+
+        if(item2["t"]*1<avg)
         {
 
+          var wishToTransfer = (avg-  item2["t"]*1 );
 
-          for(var j in roomate_to_total)
-          {
-            var item2 = roomate_to_total[j];
+          
+          Returnings.insert({payer_id:item2['r']['_id'], payment:Math.round(wishToTransfer) ,getter: item['r']['name']});
 
+          item2["t"] = item2["t"]*1 + wishToTransfer;
 
-            if(item2["t"]*1<avg)
-            {
-
-              var wishToTransfer = (avg-  item2["t"]*1 );
-              
-              console.log(item2["r"]["name"] + " give to " + item["r"]["name"] + " " + wishToTransfer);
-              $("#returningsText").append("<li>" + item2["r"]["name"] + " give to " + item["r"]["name"] + " " + wishToTransfer+  "</li>");
-              
-
-              item2["t"] = item2["t"]*1 + wishToTransfer;
-
-              item["t"] = item["t"]*1 - wishToTransfer;
-              
-
-              return true;
+          item["t"] = item["t"]*1 - wishToTransfer;
 
 
-            }
+          return true;
 
-          }
 
         }
+
       }
-      return flag;
+
     }
   }
+  return flag;
+}
+}
 
 
 
